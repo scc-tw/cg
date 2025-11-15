@@ -15,11 +15,19 @@ echo "- The PR with CI changes and version bump must be merged to main"
 echo "- You must have push access to the repository"
 echo ""
 echo "Press Ctrl+C to cancel, or press Enter to continue..."
-read
+read -r
 
 # Ensure we're on main and up to date
 echo ""
 echo "Step 1: Updating main branch..."
+
+# Check for uncommitted changes
+if ! git diff --quiet || ! git diff --staged --quiet; then
+    echo "Error: You have uncommitted changes in your working directory."
+    echo "Please commit or stash your changes before running this script."
+    exit 1
+fi
+
 git checkout main
 git pull origin main
 
@@ -42,6 +50,14 @@ fi
 # Create and push the tag
 echo ""
 echo "Step 3: Creating v1.0.2 tag..."
+
+# Check if tag already exists
+if git rev-parse v1.0.2 >/dev/null 2>&1; then
+    echo "Error: Tag v1.0.2 already exists."
+    echo "If you want to recreate it, delete it first with: git tag -d v1.0.2 && git push origin :v1.0.2"
+    exit 1
+fi
+
 git tag -a v1.0.2 -m "Release v1.0.2 - Migrate to modern release workflow"
 
 echo ""

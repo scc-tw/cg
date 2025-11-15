@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-    branches-ignore:
-      - release
 
 # This is what will cancel the workflow
 concurrency:

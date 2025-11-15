@@ -2,7 +2,7 @@
 # Complete Release Migration Script
 # Run this after the PR is merged to main
 
-set -e
+set -euo pipefail
 
 echo "=== Release Migration Script ==="
 echo ""
@@ -26,7 +26,12 @@ git pull origin main
 # Delete the remote release branch
 echo ""
 echo "Step 2: Deleting remote release branch..."
-git push origin --delete release || echo "Note: Release branch may already be deleted"
+if git ls-remote --exit-code --heads origin release >/dev/null 2>&1; then
+    git push origin --delete release
+    echo "✓ Remote release branch deleted"
+else
+    echo "Note: Remote release branch does not exist or was already deleted"
+fi
 
 # Delete local release branch if it exists
 if git show-ref --verify --quiet refs/heads/release; then

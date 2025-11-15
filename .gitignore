@@ -160,3 +160,11 @@ cython_debug/
 #.idea/
 
 .vscode/
+
+# Nuitka build artifacts
+main.build/
+main.dist/
+main.onefile-build/
+*.elf
+*.macho
+*.exe

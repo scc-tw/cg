@@ -4,11 +4,17 @@
 
 set -euo pipefail
 
+# Configuration
+REPO_OWNER="scc-tw"
+REPO_NAME="cg"
+TAG_VERSION="v1.0.2"
+TAG_MESSAGE="Release v1.0.2 - Migrate to modern release workflow"
+
 echo "=== Release Migration Script ==="
 echo ""
 echo "This script will:"
 echo "1. Delete the legacy release branch"
-echo "2. Create a v1.0.2 tag on main to trigger a release"
+echo "2. Create a ${TAG_VERSION} tag on main to trigger a release"
 echo ""
 echo "Prerequisites:"
 echo "- The PR with CI changes and version bump must be merged to main"
@@ -49,30 +55,30 @@ fi
 
 # Create and push the tag
 echo ""
-echo "Step 3: Creating v1.0.2 tag..."
+echo "Step 3: Creating ${TAG_VERSION} tag..."
 
 # Check if tag already exists
-if git rev-parse v1.0.2 >/dev/null 2>&1; then
-    echo "Error: Tag v1.0.2 already exists."
-    echo "If you want to recreate it, delete it first with: git tag -d v1.0.2 && git push origin :v1.0.2"
+if git rev-parse "${TAG_VERSION}" >/dev/null 2>&1; then
+    echo "Error: Tag ${TAG_VERSION} already exists."
+    echo "If you want to recreate it, delete it first with: git tag -d ${TAG_VERSION} && git push origin :${TAG_VERSION}"
     exit 1
 fi
 
-git tag -a v1.0.2 -m "Release v1.0.2 - Migrate to modern release workflow"
+git tag -a "${TAG_VERSION}" -m "${TAG_MESSAGE}"
 
 echo ""
 echo "Step 4: Pushing tag to trigger release workflow..."
-git push origin v1.0.2
+git push origin "${TAG_VERSION}"
 
 echo ""
 echo "=== Migration Complete! ==="
 echo ""
 echo "✓ Legacy release branch deleted"
-echo "✓ Tag v1.0.2 created and pushed"
+echo "✓ Tag ${TAG_VERSION} created and pushed"
 echo ""
 echo "Next steps:"
-echo "1. Go to https://github.com/scc-tw/cg/actions to monitor the release workflow"
-echo "2. Once complete, verify the release at https://github.com/scc-tw/cg/releases"
+echo "1. Go to https://github.com/${REPO_OWNER}/${REPO_NAME}/actions to monitor the release workflow"
+echo "2. Once complete, verify the release at https://github.com/${REPO_OWNER}/${REPO_NAME}/releases"
 echo ""
 echo "Future releases: Just create and push a tag on main"
 echo "  git tag -a v1.0.3 -m 'Release v1.0.3'"

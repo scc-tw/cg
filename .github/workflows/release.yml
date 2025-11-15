@@ -17,9 +17,12 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      # macOS 13 is deprecated (brownouts since Nov 2024, retirement Dec 4, 2025).
+      # Using macos-15-intel for Intel x86_64 builds. Note: macOS 15 Intel runner
+      # support will end in 2027. Future migrations should target ARM64 architecture.
       matrix:
         python-version: [3.11]
-        os: [ubuntu-latest, macos-latest, windows-latest, macos-13]
+        os: [ubuntu-latest, macos-latest, windows-latest, macos-15-intel]
 
     steps:
     - name: Checkout code
@@ -66,7 +69,7 @@ jobs:
         path: cg-x86_64.exe
 
     - name: Upload Artifact macho (x86)
-      if: matrix.os == 'macos-13'
+      if: matrix.os == 'macos-15-intel'
       uses: actions/upload-artifact@v4
       with:
         name: cg-x86_64.macho

@@ -94,8 +94,6 @@ jobs:
             base_image: raspios_lite:latest
             cpu_info: cpuinfo/raspberrypi_zero2_w
             image_additional_mb: 1024
-            copy_artifacts_on_fail: yes
-            copy_artifact_dest: /release
     steps:
     - uses: actions/checkout@v4
     - uses: pguyot/arm-runner-action@v2
@@ -106,8 +104,8 @@ jobs:
         cpu_info: ${{ matrix.cpu_info }}
         shell: bash
         image_additional_mb: ${{ matrix.image_additional_mb }}
-        copy_artifacts_on_fail: ${{ matrix.copy_artifacts_on_fail }}
         copy_artifact_path: cg-${{ matrix.arch }}.elf
+        copy_artifact_dest: .
         commands: |
           apt-get update -y
           apt-get install python3-dev python3 python3-pip patchelf ccache libffi-dev -y --no-install-recommends
@@ -115,12 +113,6 @@ jobs:
           poetry install --no-root
           df -h
           ci/build_nuitka/unix.sh
-          mkdir -p ${{ matrix.copy_artifact_dest }}
-    - name: Extract Artifact from output image
-      run: |
-        sudo apt-get install -y fdisk parted
-        chmod +x ./ci/armlinux_loopdev_extract.sh
-        ./ci/armlinux_loopdev_extract.sh  ${{ steps.arm_runner_install.outputs.image }} cg-${{ matrix.arch }}.elf
 
     - name: Upload Artifact (ARM)
       uses: actions/upload-artifact@v4
